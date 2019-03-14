@@ -1,3 +1,3 @@
 # Ray Tracing In One Weekend
 
-<img align="center" src="https://github.com/GPSnoopy/RayTracingInOneWeekend/Book1.jpg">
+<img align="center" src="https://github.com/GPSnoopy/RayTracingInOneWeekend/blob/master/Book1.jpg">
