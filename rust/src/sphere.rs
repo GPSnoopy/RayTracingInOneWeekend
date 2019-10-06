@@ -1,5 +1,5 @@
-use super::hittable::Hittable;
 use super::hit_record::HitRecord;
+use super::hittable::Hittable;
 use super::ray::Ray;
 use super::vec3::*;
 
@@ -10,7 +10,7 @@ pub struct Sphere {
 
 impl Sphere {
     pub fn new(center: Vec3, radius: f32) -> Sphere {
-        Sphere {center, radius}
+        Sphere { center, radius }
     }
 }
 

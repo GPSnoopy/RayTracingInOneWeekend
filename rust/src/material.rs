@@ -10,7 +10,10 @@ pub struct MaterialRay {
 
 impl MaterialRay {
     pub fn new(scattered: Ray, attenuation: Vec3) -> MaterialRay {
-        MaterialRay {scattered, attenuation}
+        MaterialRay {
+            scattered,
+            attenuation,
+        }
     }
 }
 
@@ -25,9 +28,11 @@ pub fn reflect(v: Vec3, normal: Vec3) -> Vec3 {
 pub fn refract(v: Vec3, normal: Vec3, ni_over_nt: f32) -> Option<Vec3> {
     let uv = unit_vector(v);
     let dt = dot(uv, normal);
-    let discriminant = 1.0 - ni_over_nt * ni_over_nt*(1.0 - dt * dt);
+    let discriminant = 1.0 - ni_over_nt * ni_over_nt * (1.0 - dt * dt);
 
-    if discriminant > 0.0
-    { Some(ni_over_nt * (uv - normal * dt) - normal * discriminant.sqrt()) } else
-    { None }
+    if discriminant > 0.0 {
+        Some(ni_over_nt * (uv - normal * dt) - normal * discriminant.sqrt())
+    } else {
+        None
+    }
 }

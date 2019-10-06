@@ -1,7 +1,7 @@
 mod camera;
 mod dielectric;
-mod hittable;
 mod hit_record;
+mod hittable;
 mod lambertian;
 mod material;
 mod metal;

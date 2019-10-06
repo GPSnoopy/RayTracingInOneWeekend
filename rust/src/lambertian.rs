@@ -10,13 +10,16 @@ pub struct Lambertian {
 
 impl Lambertian {
     pub fn new(albedo: Vec3) -> Lambertian {
-        Lambertian {albedo}
+        Lambertian { albedo }
     }
 }
 
 impl Material for Lambertian {
     fn scatter(&self, ray: &Ray, record: &HitRecord, random: &mut Random) -> Option<MaterialRay> {
         let target = record.point + record.normal + random_in_unit_sphere(random);
-		Some(MaterialRay::new(Ray::new(record.point, target - record.point), self.albedo))
+        Some(MaterialRay::new(
+            Ray::new(record.point, target - record.point),
+            self.albedo,
+        ))
     }
 }

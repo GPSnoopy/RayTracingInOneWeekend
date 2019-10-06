@@ -8,6 +8,6 @@ pub struct HitRecord {
 
 impl HitRecord {
     pub fn new(t: f32, point: Vec3, normal: Vec3) -> HitRecord {
-        HitRecord{t, point, normal}
+        HitRecord { t, point, normal }
     }
 }
