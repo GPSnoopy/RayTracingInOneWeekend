@@ -4,16 +4,28 @@ use core::ops::*;
 pub struct Vec3 {
     x: f32,
     y: f32,
-    z: f32
+    z: f32,
 }
 
 impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
-        Vec3 {x, y, z}
+        Vec3 { x, y, z }
     }
 
     pub fn zero() -> Vec3 {
-        Vec3 {x: 0.0, y: 0.0, z: 0.0}
+        Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
+    }
+
+    pub fn one() -> Vec3 {
+        Vec3 {
+            x: 1.0,
+            y: 1.0,
+            z: 1.0,
+        }
     }
 
     pub fn x(&self) -> f32 {
@@ -26,6 +38,14 @@ impl Vec3 {
 
     pub fn z(&self) -> f32 {
         self.z
+    }
+}
+
+// Unary Sub
+impl Neg for Vec3 {
+    type Output = Vec3;
+    fn neg(self) -> Vec3 {
+        Vec3::new(-self.x, -self.y, -self.z)
     }
 }
 
@@ -51,6 +71,18 @@ impl Add<f32> for Vec3 {
     }
 }
 
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, other: Vec3) {
+        *self = *self + other;
+    }
+}
+
+impl AddAssign<f32> for Vec3 {
+    fn add_assign(&mut self, other: f32) {
+        *self = *self + other;
+    }
+}
+
 // Sub
 impl Sub for Vec3 {
     type Output = Vec3;
@@ -70,6 +102,18 @@ impl Sub<f32> for Vec3 {
     type Output = Vec3;
     fn sub(self, other: f32) -> Vec3 {
         Vec3::new(self.x - other, self.y - other, self.z - other)
+    }
+}
+
+impl SubAssign for Vec3 {
+    fn sub_assign(&mut self, other: Vec3) {
+        *self = *self - other;
+    }
+}
+
+impl SubAssign<f32> for Vec3 {
+    fn sub_assign(&mut self, other: f32) {
+        *self = *self - other;
     }
 }
 
@@ -95,6 +139,18 @@ impl Mul<f32> for Vec3 {
     }
 }
 
+impl MulAssign for Vec3 {
+    fn mul_assign(&mut self, other: Vec3) {
+        *self = *self * other;
+    }
+}
+
+impl MulAssign<f32> for Vec3 {
+    fn mul_assign(&mut self, other: f32) {
+        *self = *self * other;
+    }
+}
+
 // Div
 impl Div for Vec3 {
     type Output = Vec3;
@@ -117,16 +173,28 @@ impl Div<f32> for Vec3 {
     }
 }
 
+impl DivAssign for Vec3 {
+    fn div_assign(&mut self, other: Vec3) {
+        *self = *self / other;
+    }
+}
+
+impl DivAssign<f32> for Vec3 {
+    fn div_assign(&mut self, other: f32) {
+        *self = *self / other;
+    }
+}
+
 pub fn cross(l: Vec3, r: Vec3) -> Vec3 {
     Vec3::new(
-		l.y*r.z - l.z*r.y,
-		l.z*r.x - l.x*r.z,
-		l.x*r.y - l.y*r.x
+        l.y * r.z - l.z * r.y,
+        l.z * r.x - l.x * r.z,
+        l.x * r.y - l.y * r.x,
     )
 }
 
 pub fn dot(l: Vec3, r: Vec3) -> f32 {
-    l.x*r.x + l.y*r.y + l.z*r.z
+    l.x * r.x + l.y * r.y + l.z * r.z
 }
 
 pub fn squared_length(v: Vec3) -> f32 {

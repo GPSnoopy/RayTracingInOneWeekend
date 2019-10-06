@@ -1,7 +1,13 @@
-
 mod camera;
+mod dielectric;
+mod hittable;
+mod hit_record;
+mod lambertian;
+mod material;
+mod metal;
 mod random;
 mod ray;
+mod sphere;
 mod vec3;
 
 use camera::Camera;
@@ -24,13 +30,21 @@ fn main() {
     const APERTURE: f32 = 0.1;
     const FOCUS_DISTANCE: f32 = 10.0;
 
-    let buffer: Vec<Vec3> = vec![Vec3::zero(); WIDTH*HEIGHT];
+    let buffer: Vec<Vec3> = vec![Vec3::zero(); WIDTH * HEIGHT];
 
     output_frame_buffer(&buffer, WIDTH, HEIGHT);
 }
 
-fn render_scene() {
-
+fn render_scene(
+    buffer: &Vec<Vec3>,
+    camera: &Camera,
+    w: usize,
+    h: usize,
+    samples: usize,
+    bounces: usize,
+) {
+    // TODO multithread
+    render_scene_per_thread(buffer, camera, w, h, samples, bounces);
 }
 
 fn output_frame_buffer(buffer: &Vec<Vec3>, w: usize, h: usize) {
@@ -38,8 +52,13 @@ fn output_frame_buffer(buffer: &Vec<Vec3>, w: usize, h: usize) {
 
     for j in (0..h).rev() {
         for i in 0..w {
-            let color = &buffer[j*w + i];
-            println!("{} {} {}", color.x() as i32, color.y() as i32, color.z() as i32);
+            let color = &buffer[j * w + i];
+            println!(
+                "{} {} {}",
+                color.x() as i32,
+                color.y() as i32,
+                color.z() as i32
+            );
         }
     }
 }
@@ -47,19 +66,21 @@ fn output_frame_buffer(buffer: &Vec<Vec3>, w: usize, h: usize) {
 fn render_scene_per_thread(
     buffer: &Vec<Vec3>,
     camera: &Camera,
-    w: usize, h: usize, samples: usize, bounces: usize) 
-    {
+    w: usize,
+    h: usize,
+    samples: usize,
+    bounces: usize,
+) {
     let mut random = Random::new(1);
 
     for j in (0..h).rev() {
         for i in 0..w {
-            
             let mut color = Vec3::zero();
 
             for s in 0..samples {
                 let u = (i as f32 + uniform(&mut random)) / w as f32;
                 let v = (j as f32 + uniform(&mut random)) / h as f32;
-                let ray = camera.get_ray(&mut random, u , v);
+                let ray = camera.get_ray(&mut random, u, v);
 
                 color += get_color(&mut random, &ray, 0, bounces);
             }

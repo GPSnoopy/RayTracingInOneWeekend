@@ -1,17 +1,18 @@
-
 use super::vec3::*;
 
+use rand::distributions::Uniform;
 use rand::{Rng, SeedableRng};
 use rand_pcg;
-use rand::distributions::Uniform;
 
 pub struct Random {
-    generator: rand_pcg::Pcg64
+    generator: rand_pcg::Pcg64,
 }
 
 impl Random {
     pub fn new(seed: u64) -> Random {
-        Random{ generator: rand_pcg::Pcg64::seed_from_u64(seed) }
+        Random {
+            generator: rand_pcg::Pcg64::seed_from_u64(seed),
+        }
     }
 }
 

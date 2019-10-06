@@ -1,4 +1,3 @@
-
 use super::random::*;
 use super::ray::*;
 use super::vec3::*;
@@ -13,12 +12,11 @@ pub struct Camera {
     pub lens_radius: f32,
 
     u: Vec3,
-    v: Vec3, 
-    w: Vec3
+    v: Vec3,
+    w: Vec3,
 }
 
 impl Camera {
-
     pub fn look_at(
         origin: Vec3,
         target: Vec3,
@@ -26,9 +24,8 @@ impl Camera {
         vertical_fov: f32,
         aspect_ratio: f32,
         aperture: f32,
-        focus_distance: f32
+        focus_distance: f32,
     ) -> Camera {
-
         let theta = vertical_fov * (std::f32::consts::PI / 180.0);
         let half_height = (theta / 2.0).tan();
         let half_width = aspect_ratio * half_height;
@@ -48,13 +45,18 @@ impl Camera {
             horizontal,
             vertical,
             lens_radius,
-            u, v, w
+            u,
+            v,
+            w,
         }
     }
 
     pub fn get_ray(&self, random: &mut Random, s: f32, t: f32) -> Ray {
         let rd = self.lens_radius * random_in_unit_disk(random);
         let offset = self.u * rd.x() + self.v * rd.y();
-        Ray::new(self.origin + offset, self.lower_left_corner + s * self.horizontal + t * self.vertical - self.origin - offset)
+        Ray::new(
+            self.origin + offset,
+            self.lower_left_corner + s * self.horizontal + t * self.vertical - self.origin - offset,
+        )
     }
 }
