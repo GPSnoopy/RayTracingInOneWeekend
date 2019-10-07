@@ -1,0 +1,37 @@
+use super::hit_record::HitRecord;
+use super::hittable::Hittable;
+use super::ray::Ray;
+
+pub struct HittableList {
+    list: Vec<Box<Hittable>>,
+}
+
+impl HittableList {
+    pub fn new() -> HittableList {
+        HittableList {list: Vec::new()}
+    }
+
+    pub fn add(&mut self, hittable: Box<Hittable>) {
+        self.list.push(hittable);
+    }
+}
+
+impl Hittable for HittableList {
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
+        let mut record: Option<HitRecord> = None;
+        let mut t: f32 = t_max;
+
+        for hittable in self.list.iter() {
+            let hit = hittable.hit(ray, t_min, t);
+            match hit {
+                Some(r) => {
+                    t = r.t;
+                    record = Some(r);
+                }
+                None => { }
+            } 
+        }
+
+        record
+    }
+}

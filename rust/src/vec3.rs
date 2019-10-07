@@ -205,6 +205,10 @@ pub fn length(v: Vec3) -> f32 {
     squared_length(v).sqrt()
 }
 
+pub fn sqrt(v: Vec3) -> Vec3 {
+    Vec3::new(v.x.sqrt(), v.y.sqrt(), v.z.sqrt())
+}
+
 pub fn unit_vector(v: Vec3) -> Vec3 {
     v / length(v)
 }
