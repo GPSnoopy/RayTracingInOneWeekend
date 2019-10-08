@@ -1,8 +1,9 @@
 [package]
-name = "raytracing_in_one_weekend"
+name = "book1"
 version = "0.1.0"
 authors = ["Tanguy Fautre <tanguy@fautre.com>"]
 edition = "2018"
+description = "Ray Tracing In One Weekend"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
