@@ -194,7 +194,10 @@ pub fn cross(l: Vec3, r: Vec3) -> Vec3 {
 }
 
 pub fn dot(l: Vec3, r: Vec3) -> f32 {
-    l.x * r.x + l.y * r.y + l.z * r.z
+    // For some reason, Rust 2018 does not automatically generate FMA instructions. 
+    // It needs a bit of explicit help.
+    //l.x * r.x + l.y * r.y + l.z * r.z
+    l.x.mul_add(r.x, l.y.mul_add(r.y, l.z * r.z))
 }
 
 pub fn squared_length(v: Vec3) -> f32 {
