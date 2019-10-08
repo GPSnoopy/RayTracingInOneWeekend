@@ -19,13 +19,13 @@ impl Metal {
 }
 
 impl Material for Metal {
-    fn scatter(&self, ray: &Ray, record: &HitRecord, random: &mut Random) -> Option<MaterialRay> {
-        let reflected = reflect(unit_vector(ray.direction), record.normal);
+    fn scatter(&self, ray: &Ray, hit: &HitRecord, random: &mut Random) -> Option<MaterialRay> {
+        let reflected = reflect(unit_vector(ray.direction), hit.normal);
 
-        if dot(reflected, record.normal) > 0.0 {
+        if dot(reflected, hit.normal) > 0.0 {
             Some(MaterialRay::new(
                 Ray::new(
-                    record.point,
+                    hit.point,
                     reflected + self.fuzz * random_in_unit_sphere(random),
                 ),
                 self.albedo,

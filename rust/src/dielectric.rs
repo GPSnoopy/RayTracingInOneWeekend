@@ -15,10 +15,10 @@ impl Dielectric {
 }
 
 impl Material for Dielectric {
-    fn scatter(&self, ray: &Ray, record: &HitRecord, random: &mut Random) -> Option<MaterialRay> {
-        let dot = dot(ray.direction, record.normal);
+    fn scatter(&self, ray: &Ray, hit: &HitRecord, random: &mut Random) -> Option<MaterialRay> {
+        let dot = dot(ray.direction, hit.normal);
 
-        let outward_normal = if dot > 0.0 {-record.normal} else {record.normal};
+        let outward_normal = if dot > 0.0 {-hit.normal} else {hit.normal};
         let ni_over_nt = if dot > 0.0 {self.refraction_index} else {1.0 / self.refraction_index};
         let cosine = if dot > 0.0 {self.refraction_index * dot / length(ray.direction)} else {-dot / length(ray.direction)};
 
@@ -27,12 +27,12 @@ impl Material for Dielectric {
 
         if uniform(random) < reflect_prob {
             Some(MaterialRay::new(
-                Ray::new(record.point, reflect(ray.direction, record.normal)),
+                Ray::new(hit.point, reflect(ray.direction, hit.normal)),
                 Vec3::one(),
             ))
         } else {
             Some(MaterialRay::new(
-                Ray::new(record.point, refracted.unwrap()),
+                Ray::new(hit.point, refracted.unwrap()),
                 Vec3::one(),
             ))
         }

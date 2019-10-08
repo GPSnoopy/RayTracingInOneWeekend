@@ -18,7 +18,7 @@ impl MaterialRay {
 }
 
 pub trait Material {
-    fn scatter(&self, ray: &Ray, record: &HitRecord, random: &mut Random) -> Option<MaterialRay>;
+    fn scatter(&self, ray: &Ray, hit: &HitRecord, random: &mut Random) -> Option<MaterialRay>;
 }
 
 pub fn reflect(v: Vec3, normal: Vec3) -> Vec3 {

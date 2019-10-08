@@ -126,19 +126,14 @@ fn render_scene_per_thread(
 }
 
 fn get_color(random: &mut Random, world: &HittableList, ray: &Ray, depth: usize, max_depth: usize) -> Vec3 {
-	let hit = world.hit(ray, 0.001, std::f32::MAX);
-
-	match hit {
-        Some(record) => {
-            if depth < max_depth {
-    		    let material_ray = record.material.scatter(ray, &record, random);
-                return match material_ray {
-                    Some(scatter) => {scatter.attenuation * get_color(random, world, &scatter.scattered, depth + 1, max_depth)} 
-                    None => { Vec3::zero() }
-                }
+	if let Some(hit) = world.hit(ray, 0.001, std::f32::MAX) {
+        if depth < max_depth {
+            let material_ray = hit.material.scatter(ray, &hit, random);
+            return match material_ray {
+                Some(scatter) => {scatter.attenuation * get_color(random, world, &scatter.scattered, depth + 1, max_depth)} 
+                None => { Vec3::zero() }
             }
         }
-        None => {}
 	}
 
 	let direction = unit_vector(ray.direction);

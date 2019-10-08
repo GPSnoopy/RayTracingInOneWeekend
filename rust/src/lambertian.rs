@@ -15,10 +15,10 @@ impl Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, ray: &Ray, record: &HitRecord, random: &mut Random) -> Option<MaterialRay> {
-        let target = record.point + record.normal + random_in_unit_sphere(random);
+    fn scatter(&self, ray: &Ray, hit: &HitRecord, random: &mut Random) -> Option<MaterialRay> {
+        let target = hit.point + hit.normal + random_in_unit_sphere(random);
         Some(MaterialRay::new(
-            Ray::new(record.point, target - record.point),
+            Ray::new(hit.point, target - hit.point),
             self.albedo,
         ))
     }

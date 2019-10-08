@@ -22,13 +22,9 @@ impl Hittable for HittableList {
         let mut t: f32 = t_max;
 
         for hittable in self.list.iter() {
-            let hit = hittable.hit(ray, t_min, t);
-            match hit {
-                Some(r) => {
-                    t = r.t;
-                    record = Some(r);
-                }
-                None => { }
+            if let Some(hit) = hittable.hit(ray, t_min, t) {
+                t = hit.t;
+                record = Some(hit);
             } 
         }
 
