@@ -13,7 +13,6 @@ pub struct Camera {
 
     u: Vec3,
     v: Vec3,
-    w: Vec3,
 }
 
 impl Camera {
@@ -47,7 +46,6 @@ impl Camera {
             lens_radius,
             u,
             v,
-            w,
         }
     }
 

@@ -112,7 +112,7 @@ fn render_scene_per_thread(
         for i in 0..w {
             let mut color = Vec3::zero();
 
-            for s in 0..samples {
+            for _s in 0..samples {
                 let u = (i as f32 + uniform(&mut random)) / w as f32;
                 let v = (j as f32 + uniform(&mut random)) / h as f32;
                 let ray = camera.get_ray(&mut random, u, v);

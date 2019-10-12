@@ -3,7 +3,7 @@ use super::hittable::Hittable;
 use super::ray::Ray;
 
 pub struct HittableList {
-    list: Vec<Box<Hittable>>,
+    list: Vec<Box<dyn Hittable>>,
 }
 
 impl HittableList {
@@ -11,7 +11,7 @@ impl HittableList {
         HittableList {list: Vec::new()}
     }
 
-    pub fn add(&mut self, hittable: Box<Hittable>) {
+    pub fn add(&mut self, hittable: Box<dyn Hittable>) {
         self.list.push(hittable);
     }
 }

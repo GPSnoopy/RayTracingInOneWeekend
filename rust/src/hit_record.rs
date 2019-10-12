@@ -5,11 +5,11 @@ pub struct HitRecord<'a> {
     pub t: f32,
     pub point: Vec3,
     pub normal: Vec3,
-    pub material: &'a Material,
+    pub material: &'a dyn Material,
 }
 
 impl<'a> HitRecord<'a> {
-    pub fn new(t: f32, point: Vec3, normal: Vec3, material: &Material) -> HitRecord {
+    pub fn new(t: f32, point: Vec3, normal: Vec3, material: &dyn Material) -> HitRecord {
         HitRecord { t, point, normal, material }
     }
 }
