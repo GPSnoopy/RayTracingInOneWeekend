@@ -22,6 +22,8 @@ use ray::Ray;
 use sphere::Sphere;
 use vec3::*;
 
+ use std::io::Write;
+
 fn main() {
     const WIDTH: usize = 3840 / 6;
     const HEIGHT: usize = 2160 / 6;
@@ -166,17 +168,24 @@ fn get_color(random: &mut Random, world: &HittableList, ray: &Ray, depth: usize,
 }
 
 fn output_frame_buffer(buffer: &Vec<Vec3>, w: usize, h: usize) {
-    println!("P3\n{} {}\n255\n", w, h);
+    // println! is really slow, lock stdout and use it directly.
+    let stdout = std::io::stdout();
+    let lock = stdout.lock();
+    let mut writer = std::io::BufWriter::new(lock);
+
+    writer.write_fmt(format_args!("P3\n{} {}\n255\n", w, h)).unwrap();
 
     for j in (0..h).rev() {
         for i in 0..w {
             let color = &buffer[j * w + i];
-            println!(
-                "{} {} {}",
-                color.x() as i32,
-                color.y() as i32,
-                color.z() as i32
-            );
+            writer.write_fmt(
+                format_args!(
+                    "{} {} {}\n",
+                    color.x() as i32,
+                    color.y() as i32,
+                    color.z() as i32
+                )
+            ).unwrap();
         }
     }
 }
