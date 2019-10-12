@@ -37,11 +37,11 @@ fn main() {
     const APERTURE: f32 = 0.1;
     const FOCUS_DISTANCE: f32 = 10.0;
 
-    let world = random_world();
+    let world = std::sync::Arc::new(random_world());
     let camera = Camera::look_at(look_from, look_at, up, FOV, ASPECT_RATIO, APERTURE, FOCUS_DISTANCE);
     let mut buffer: Vec<Vec3> = vec![Vec3::zero(); WIDTH * HEIGHT];
 
-    render_scene(&mut buffer, &world, &camera, WIDTH, HEIGHT, SAMPLES, BOUNCES);
+    render_scene(&mut buffer, &world, camera, WIDTH, HEIGHT, SAMPLES, BOUNCES);
     output_frame_buffer(&buffer, WIDTH, HEIGHT);
 }
 
@@ -86,29 +86,45 @@ fn random_world() -> HittableList {
 
 fn render_scene(
     buffer: &mut Vec<Vec3>,
-    world: &HittableList,
-    camera: &Camera,
+    world: &std::sync::Arc<HittableList>,
+    camera: Camera,
     w: usize,
     h: usize,
     samples: usize,
     bounces: usize,
 ) {
-    // TODO multithread
-    render_scene_per_thread(buffer, world, camera, w, h, samples, bounces);
+    let num_threads = num_cpus::get() - 2;
+    let mut threads: Vec<std::thread::JoinHandle<_>> = Vec::with_capacity(num_threads);
+    let buffer_ptr = buffer.as_mut_ptr() as usize;
+
+    eprintln!("Ray-tracing using {} threads", num_threads);
+
+    for thread_id in 0..num_threads {
+        let world = std::sync::Arc::clone(world);
+        threads.push(std::thread::spawn(move || {
+            render_scene_per_thread(buffer_ptr, world.as_ref(), camera, w, h, samples, bounces, num_threads, thread_id)
+        }));
+    }
+
+    for thread in threads {
+        thread.join().unwrap();
+    }
 }
 
 fn render_scene_per_thread(
-    buffer: &mut Vec<Vec3>,
+    buffer_ptr: usize,
     world: &HittableList,
-    camera: &Camera,
+    camera: Camera,
     w: usize,
     h: usize,
     samples: usize,
     bounces: usize,
+    num_threads: usize,
+    thread_id: usize,
 ) {
-    let mut random = Random::new(1);
+    let mut random = Random::new(thread_id as u64 + 1);
 
-    for j in (0..h).rev() {
+    for j in (thread_id..h).step_by(num_threads).rev() {
         for i in 0..w {
             let mut color = Vec3::zero();
 
@@ -120,7 +136,14 @@ fn render_scene_per_thread(
                 color += get_color(&mut random, world, &ray, 0, bounces);
             }
 
-            buffer[j*w + i] = sqrt(color / samples as f32) * 255.99;
+            unsafe 
+            {
+                // https://internals.rust-lang.org/t/shouldnt-pointers-be-send-sync-or/8818
+                let color = sqrt(color / samples as f32) * 255.99;
+                let ptr = (buffer_ptr as *mut Vec3).offset((j*w + i) as isize);
+                
+                *ptr = color;
+            }
         }
     }
 }

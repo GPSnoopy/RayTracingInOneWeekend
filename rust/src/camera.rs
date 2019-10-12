@@ -4,6 +4,7 @@ use super::vec3::*;
 
 use std::f32;
 
+#[derive(Clone, Copy)]
 pub struct Camera {
     pub origin: Vec3,
     pub lower_left_corner: Vec3,

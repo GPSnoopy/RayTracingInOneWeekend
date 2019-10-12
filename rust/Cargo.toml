@@ -8,5 +8,6 @@ description = "Ray Tracing In One Weekend"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+num_cpus = "1.10"
 rand = "0.7.2"
 rand_pcg = "0.2.0"

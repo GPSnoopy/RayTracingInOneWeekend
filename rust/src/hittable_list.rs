@@ -21,7 +21,7 @@ impl Hittable for HittableList {
         let mut record: Option<HitRecord> = None;
         let mut t: f32 = t_max;
 
-        for hittable in self.list.iter() {
+        for hittable in &self.list {
             if let Some(hit) = hittable.hit(ray, t_min, t) {
                 t = hit.t;
                 record = Some(hit);
