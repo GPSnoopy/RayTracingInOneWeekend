@@ -1,9 +1,9 @@
 #pragma once
 
-#include "HitRecord.h"
-#include "Random.h"
-#include "Ray.h"
-#include "Vec3.h"
+#include "HitRecord.ispc.h"
+#include "Random.ispc.h"
+#include "Ray.ispc.h"
+#include "Vec3.ispc.h"
 
 //struct MaterialRay
 //{
@@ -58,7 +58,7 @@ typedef enum MaterialType_t
 struct Material
 {
 	// Base material
-	float<4> Diffuse;
+	Vec3 Diffuse;
 
 	// Metal fuzziness
 	float Fuzziness;

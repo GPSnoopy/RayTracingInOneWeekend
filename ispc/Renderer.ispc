@@ -1,5 +1,5 @@
 
-#include "Material.h"
+#include "Material.ispc.h"
 
 export uniform int GetTarget()
 {

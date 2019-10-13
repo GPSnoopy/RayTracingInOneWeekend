@@ -44,15 +44,17 @@ set(ISPC_HEADER_NAME "${ISPC_SRC_NAME}_ispc.h")
 set(ISPC_OBJ_NAME "${ISPC_SRC_NAME}_ispc${CMAKE_CXX_OUTPUT_EXTENSION}")
 set(ISPC_KNOWN_TARGETS "sse2" "sse4" "avx1-" "avx2" "avx512skx")
 
-set(HEADER_FILES 
-	HitRecord.h 
-	Material.h
-	Random.h
-	Ray.h
-	Vec3.h)
+set(HEADER_FILES )
 	
 set(SRC_FILES 
 	main.cpp)
+	
+set(ISPC_HEADER_FILES 
+	HitRecord.ispc.h 
+	Material.ispc.h
+	Random.ispc.h
+	Ray.ispc.h
+	Vec3.ispc.h)
 
 # Collect list of expected ISPC outputs.
 list(APPEND ISPC_BUILD_OUTPUT_HEADERS "${CMAKE_CURRENT_BINARY_DIR}/${ISPC_HEADER_NAME}")
@@ -74,7 +76,7 @@ endforeach()
 add_custom_command(OUTPUT ${ISPC_BUILD_OUTPUT_HEADERS} ${ISPC_BUILD_OUTPUT_OBJS}
 	COMMAND ${ISPC_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${ISPC_SRC_NAME}.ispc ${ISPC_FLAGS} --target=${ISPC_TARGETS} --arch=${ISPC_ARCH} -h ${ISPC_HEADER_NAME} -o ${ISPC_OBJ_NAME}
 	VERBATIM
-	DEPENDS ${HEADER_FILES}
+	DEPENDS ${ISPC_HEADER_FILES}
 	DEPENDS "${ISPC_SRC_NAME}.ispc")
 
 # Visual Studio prettiness
@@ -83,13 +85,13 @@ if (WIN32)
 	set_source_files_properties("${ISPC_SRC_NAME}.ispc" PROPERTIES HEADER_FILE_ONLY TRUE)
 	
 	# Group ispc files inside Visual Studio
-	source_group("ISPC" FILES "${ISPC_SRC_NAME}.ispc")
+	source_group("ISPC" FILES "${ISPC_SRC_NAME}.ispc" ${ISPC_HEADER_FILES})
 	source_group("ISPC Header Files" FILES ${ISPC_BUILD_OUTPUT_HEADERS})
 	source_group("ISPC Object Files" FILES ${ISPC_BUILD_OUTPUT_OBJS})
 endif()
 
 # Executable
-add_executable(${EXE_NAME} ${HEADER_FILES} ${SRC_FILES} ${ISPC_BUILD_OUTPUT_HEADERS} ${ISPC_BUILD_OUTPUT_OBJS} "${ISPC_SRC_NAME}.ispc")
+add_executable(${EXE_NAME} ${HEADER_FILES} ${SRC_FILES} ${ISPC_HEADER_FILES} ${ISPC_BUILD_OUTPUT_HEADERS} ${ISPC_BUILD_OUTPUT_OBJS} "${ISPC_SRC_NAME}.ispc")
 target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 
