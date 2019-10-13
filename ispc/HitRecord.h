@@ -2,17 +2,12 @@
 
 #include "Vec3.h"
 
-class Material;
+struct Material;
 
-struct HitRecord final
+struct HitRecord
 {
-	HitRecord(const float t, const Vec3& point, const Vec3& normal, const Material* material) :
-		t(t), Point(point), Normal(normal), Material(material)
-	{
-	}
-
 	float t;
 	Vec3 Point;
 	Vec3 Normal;
-	const class Material* Material;
+	const Material* MaterialRef;
 };
