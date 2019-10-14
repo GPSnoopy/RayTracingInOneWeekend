@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 //#include "Camera.h"
 //#include "Dielectric.h"
@@ -182,8 +183,23 @@ const char* GetTargetString(int target)
 
 void Application()
 {
+	const int w = 3840/6;
+	const int h = 2160/6;
+	const int samples = 1;
+	const int bounces = 16;
+//
+//	const Vec3 lookFrom(13, 2, 3);
+//	const Vec3 lookAt(0, 0, 0);
+//	const Vec3 up(0, 1, 0);
+//	const float fov = 20;
+//	const float aspectRatio = float(w) / float(h);
+//	const float aperture = 0.1;
+//	const float focusDistance = 10.0f;
+//	
 	std::cerr << "ISPC Target: " << GetTargetString(ispc::GetTarget()) << std::endl;
 	std::cerr << "ISPC Width: " << ispc::GetWidth() << std::endl;
+
+	//std::vector<Vec3> buffer(w * h);
 }
 
 int main()
