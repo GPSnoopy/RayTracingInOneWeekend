@@ -4,6 +4,13 @@
 
 typedef RNGState Random;
 
+static inline Random NewRandom(const int seed)
+{
+	Random rng;
+	seed_rng(&rng, seed);
+	return rng;
+}
+
 static inline float Uniform(Random& rng)
 {
 	return frandom(&rng);

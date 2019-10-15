@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HitRecord.ispc.h"
+#include "Material.ispc.h"
 #include "Ray.ispc.h"
 
 typedef enum HittableType_t
@@ -13,7 +13,7 @@ struct Hittable
 	HittableType TypeId; // Which hittable are we dealing with
 	Vec3 Center; // Sphere center
 	float Radius; // Sphere radius
-	const void* MaterialRef;
+	Material MaterialDef; // Material definition
 };
 
 static inline int SphereHit(const Hittable& sphere, const Ray& ray, const float tMin, const float tMax, HitRecord& hitRecord)
@@ -39,7 +39,7 @@ static inline int SphereHit(const Hittable& sphere, const Ray& ray, const float 
 			const Vec3 point = PointAtParameter(ray, t);
 			const Vec3 normal = (point - sphere.Center) / sphere.Radius;
 
-			hitRecord = NewHitRecord(t, point, normal, sphere.MaterialRef);
+			hitRecord = NewHitRecord(t, point, normal, sphere.MaterialDef);
 			return true;
 		}
 	}

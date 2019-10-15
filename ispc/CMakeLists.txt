@@ -45,13 +45,18 @@ set(ISPC_HEADER_NAME "${ISPC_SRC_NAME}_ispc.h")
 set(ISPC_OBJ_NAME "${ISPC_SRC_NAME}_ispc${CMAKE_CXX_OUTPUT_EXTENSION}")
 set(ISPC_KNOWN_TARGETS "sse2" "sse4" "avx1-" "avx2" "avx512skx")
 
-set(HEADER_FILES )
+set(HEADER_FILES 
+	Camera.h
+	Hittable.h
+	Material.h
+	Random.h
+	Vec3.h)
 	
 set(SRC_FILES 
 	main.cpp)
 	
-set(ISPC_HEADER_FILES 
-	HitRecord.ispc.h
+set(ISPC_HEADER_FILES
+	Camera.ispc.h
 	Hittable.ispc.h
 	HittableList.ispc.h
 	Material.ispc.h
@@ -95,6 +100,7 @@ endif()
 
 # Executable
 add_executable(${EXE_NAME} ${HEADER_FILES} ${SRC_FILES} ${ISPC_HEADER_FILES} ${ISPC_BUILD_OUTPUT_HEADERS} ${ISPC_BUILD_OUTPUT_OBJS} "${ISPC_SRC_NAME}.ispc")
+set_target_properties(${EXE_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 
