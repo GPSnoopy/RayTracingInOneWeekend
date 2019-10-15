@@ -11,8 +11,6 @@ static Vec3 Color(
 	const int depth, 
 	const uniform int maxDepth)
 {
-	const Vec3 zero = { 0, 0, 0 };
-
 	HitRecord hitRecord;
 	const int hasHit = Hit(hittables, length, ray, 0.001f, 1e30f, hitRecord);
 
@@ -21,7 +19,8 @@ static Vec3 Color(
 		MaterialRay materialRay;
 		const Material material = materials[hitRecord.MaterialIndex];
 		const int isScattered = Scatter(material, ray, hitRecord, rng, materialRay);
-		
+		const Vec3 zero = { 0, 0, 0 };
+				
 		return depth < maxDepth && isScattered
 			? materialRay.Attenuation * Color(rng, hittables, length, materials, materialRay.Scattered, depth + 1, maxDepth)
 			: zero;

@@ -107,7 +107,7 @@ static inline int MetallicScatter(const Material& material, const Ray& ray, cons
 		return false;
 	}
 
-	NewMaterialRay(record.Point, reflected + material.Fuzziness * RandomInUnitSphere(rng), material.Albedo);
+	materialRay = NewMaterialRay(record.Point, reflected + material.Fuzziness * RandomInUnitSphere(rng), material.Albedo);
 	return true;
 }
 
