@@ -13,7 +13,7 @@ struct Hittable
 	HittableType TypeId; // Which hittable are we dealing with
 	Vec3 Center; // Sphere center
 	float Radius; // Sphere radius
-	Material MaterialDef; // Material definition
+	int MaterialIndex; // Material index
 };
 
 static inline int SphereHit(const Hittable& sphere, const Ray& ray, const float tMin, const float tMax, HitRecord& hitRecord)
@@ -39,7 +39,7 @@ static inline int SphereHit(const Hittable& sphere, const Ray& ray, const float 
 			const Vec3 point = PointAtParameter(ray, t);
 			const Vec3 normal = (point - sphere.Center) / sphere.Radius;
 
-			hitRecord = NewHitRecord(t, point, normal, sphere.MaterialDef);
+			hitRecord = NewHitRecord(t, point, normal, sphere.MaterialIndex);
 			return true;
 		}
 	}

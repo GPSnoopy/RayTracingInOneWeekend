@@ -5,7 +5,8 @@
 
 static Vec3 Color(
 	Random& rng,
-	const Hittable* uniform hittables, const uniform int length, 
+	const uniform Hittable hittables[], const uniform int length,
+	const uniform Material materials[],
 	const Ray& ray, 
 	const int depth, 
 	const uniform int maxDepth)
@@ -18,11 +19,11 @@ static Vec3 Color(
 	if (hasHit)
 	{
 		MaterialRay materialRay;
-		const Material material = *hitRecord.MaterialPtr;
+		const Material material = materials[hitRecord.MaterialIndex];
 		const int isScattered = Scatter(material, ray, hitRecord, rng, materialRay);
 		
 		return depth < maxDepth && isScattered
-			? materialRay.Attenuation * Color(rng, hittables, length, materialRay.Scattered, depth + 1, maxDepth)
+			? materialRay.Attenuation * Color(rng, hittables, length, materials, materialRay.Scattered, depth + 1, maxDepth)
 			: zero;
 	}
 
@@ -34,8 +35,9 @@ static Vec3 Color(
 }
 
 static void RenderTile(
-	Vec3* uniform buffer,
-	const Hittable* uniform hittables, const uniform int length,
+	uniform Vec3 buffer[],
+	const uniform Hittable hittables[], const uniform int length,
+	const uniform Material materials[],
 	const uniform Camera& camera,
 	const uniform int x0, const uniform int x1,
 	const uniform int y0, const uniform int y1,
@@ -43,7 +45,7 @@ static void RenderTile(
 	const uniform int samples, 
 	const uniform int bounces)
 {
-	Random rng = NewRandom(x0 + y0 * (programIndex << 15));
+	Random rng = NewRandom(1);// NewRandom(x0 + y0 * (programIndex << 15));
 
 	foreach_tiled(y = y0 ... y1, x = x0 ... x1) 
 	{
@@ -51,10 +53,10 @@ static void RenderTile(
 
 		for (int s = 0; s < samples; ++s)
 		{
-			const float u = (float) (x + Uniform(rng)) / (float) (w);
-			const float v = (float) (y + Uniform(rng)) / (float) (h);
+			const float u = (float) (x/* + Uniform(rng)*/) / (float) (w);
+			const float v = (float) (y/* + Uniform(rng)*/) / (float) (h);
 
-			color += Color(rng, hittables, length, GetRay(camera, rng, u, v), 0, bounces);
+			color += Color(rng, hittables, length, materials, GetRay(camera, rng, u, v), 0, bounces);
 		}
 
 		buffer[y * w + x] = Sqrt(color / (float) samples) * 255.99f;
@@ -84,8 +86,9 @@ export uniform int GetWidth()
 }
 
 export void Render(
-	Vec3* uniform buffer,
-	const Hittable* uniform hittables, const uniform int length,
+	uniform Vec3 buffer[],
+	const uniform Hittable hittables[], const uniform int length,
+	const uniform Material materials[],
 	const uniform Camera& camera,
 	const uniform int width, const uniform int height,
 	const uniform int samples,
@@ -94,6 +97,7 @@ export void Render(
 	RenderTile(
 		buffer,
 		hittables, length,
+		materials,
 		camera,
 		0, width,
 		0, height,

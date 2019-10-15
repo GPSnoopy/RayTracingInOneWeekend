@@ -9,14 +9,22 @@
 #include <vector>
 
 typedef std::vector<ispc::Hittable> HittableList;
+typedef std::vector<ispc::Material> MaterialList;
 
-HittableList RandomWorld()
+void AddSphere(HittableList& hittables, MaterialList& materials, const Vec3& centre, const float radius, const ispc::Material& material)
+{
+	materials.push_back(material);
+	hittables.push_back(Hittable::Sphere(centre, radius, static_cast<int>(materials.size() - 1)));
+}
+
+std::tuple<HittableList, MaterialList> RandomWorld()
 {
 	Random random(42);  // NOLINT
 
-	HittableList world;
+	HittableList hittables;
+	MaterialList materials;
 
-	world.push_back(Hittable::Sphere(Vec3(0, -1000, 0), 1000, Material::Lambertian(Vec3(0.5f, 0.5f, 0.5f))));
+	AddSphere(hittables, materials, Vec3(0, -1000, 0), 1000, Material::Lambertian(Vec3(0.5f, 0.5f, 0.5f)));
 
 	for (int a = -11; a < 11; ++a)
 	{
@@ -29,30 +37,30 @@ HittableList RandomWorld()
 			{
 				if (chooseMat < 0.8f) // Diffuse
 				{
-					world.push_back(Hittable::Sphere(center, 0.2f, Material::Lambertian(Vec3(
+					AddSphere(hittables, materials, center, 0.2f, Material::Lambertian(Vec3(
 						Uniform(random)*Uniform(random), 
 						Uniform(random)*Uniform(random), 
-						Uniform(random)*Uniform(random)))));
+						Uniform(random)*Uniform(random))));
 				}
 				else if (chooseMat < 0.95f) // Metal
 				{
-					world.push_back(Hittable::Sphere(center, 0.2f, Material::Metallic(
+					AddSphere(hittables, materials, center, 0.2f, Material::Metallic(
 						Vec3(0.5f*(1 + Uniform(random)), 0.5f*(1 + Uniform(random)), 0.5f*(1 + Uniform(random))),
-						0.5f*Uniform(random))));
+						0.5f*Uniform(random)));
 				}
 				else // Glass
 				{
-					world.push_back(Hittable::Sphere(center, 0.2f, Material::Dielectric(1.5f)));
+					AddSphere(hittables, materials, center, 0.2f, Material::Dielectric(1.5f));
 				}
 			}
 		}
 	}
 
-	world.push_back(Hittable::Sphere(Vec3(0, 1, 0), 1.0f, Material::Dielectric(1.5f)));
-	world.push_back(Hittable::Sphere(Vec3(-4, 1, 0), 1.0f, Material::Lambertian(Vec3(0.4f, 0.2f, 0.1f))));
-	world.push_back(Hittable::Sphere(Vec3(4, 1, 0), 1.0f, Material::Metallic(Vec3(0.7f, 0.6f, 0.5f), 0.0f)));
+	AddSphere(hittables, materials, Vec3(0, 1, 0), 1.0f, Material::Dielectric(1.5f));
+	AddSphere(hittables, materials, Vec3(-4, 1, 0), 1.0f, Material::Lambertian(Vec3(0.4f, 0.2f, 0.1f)));
+	AddSphere(hittables, materials, Vec3(4, 1, 0), 1.0f, Material::Metallic(Vec3(0.7f, 0.6f, 0.5f), 0.0f));
 
-	return world;
+	return std::forward_as_tuple(hittables, materials);
 }
 
 const char* GetTargetString(int target)
@@ -68,11 +76,19 @@ const char* GetTargetString(int target)
 	}
 }
 
-void Render(std::vector<Vec3>& vec3s, const HittableList& world, const ispc::Camera& camera, const int w, const int h, const int samples, const int bounces)
+void Render(
+	std::vector<Vec3>& vec3s, 
+	const HittableList& world,
+	const MaterialList& materials,
+	const ispc::Camera& camera, 
+	const int w, const int h, 
+	const int samples, 
+	const int bounces)
 {
 	ispc::Render(
 		reinterpret_cast<ispc::float3*>(vec3s.data()),
 		world.data(), static_cast<int>(world.size()),
+		materials.data(),
 		camera,
 		w, h,
 		samples, 
@@ -106,17 +122,17 @@ void Application()
 	const Vec3 up(0, 1, 0);
 	const float fov = 20;
 	const float aspectRatio = float(w) / float(h);
-	const float aperture = 0.1;
+	const float aperture = 0.0;// 0.1;
 	const float focusDistance = 10.0f;
 
 	const auto camera = Camera::LookAt(lookFrom, lookAt, up, fov, aspectRatio, aperture, focusDistance);
-	const auto world = RandomWorld();
+	const auto [hittables, materials] = RandomWorld();
 	std::vector<Vec3> buffer(w * h);
 
 	std::cerr << "ISPC Target: " << GetTargetString(ispc::GetTarget()) << std::endl;
 	std::cerr << "ISPC Width: " << ispc::GetWidth() << std::endl;
 
-	Render(buffer, world, camera, w, h, samples, bounces);
+	Render(buffer, hittables, materials, camera, w, h, samples, bounces);
 	OutputFramebuffer(buffer, w, h);
 }
 

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "HitRecord.ispc.h"
 #include "Random.ispc.h"
 #include "Ray.ispc.h"
-#include "Vec3.ispc.h"
 
 // Material Definitions
 
@@ -27,26 +27,12 @@ struct MaterialRay
 	Vec3 Attenuation;
 };
 
-struct HitRecord
-{
-	float t;
-	Vec3 Point;
-	Vec3 Normal;
-	const varying Material* MaterialPtr;
-};
-
 // Utility Functions
 
 static inline MaterialRay NewMaterialRay(const Vec3 origin, const Vec3& direction, const Vec3& attenuation)
 {
 	const MaterialRay materialRay = { {origin, direction}, attenuation };
 	return materialRay;
-}
-
-static inline HitRecord NewHitRecord(float t, const Vec3& point, const Vec3& normal, const Material& materialDef)
-{
-	const HitRecord hitRecord = { t, point, normal, &materialDef };
-	return hitRecord;
 }
 
 static inline Vec3 Reflect(const Vec3& v, const Vec3& normal)

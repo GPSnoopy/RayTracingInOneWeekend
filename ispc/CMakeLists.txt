@@ -57,6 +57,7 @@ set(SRC_FILES
 	
 set(ISPC_HEADER_FILES
 	Camera.ispc.h
+	HitRecord.ispc.h
 	Hittable.ispc.h
 	HittableList.ispc.h
 	Material.ispc.h
