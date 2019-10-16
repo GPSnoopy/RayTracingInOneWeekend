@@ -6,6 +6,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <thread>
 #include <vector>
 
 typedef std::vector<ispc::Hittable> HittableList;
@@ -77,34 +78,66 @@ const char* GetTargetString(int target)
 }
 
 void Render(
-	std::vector<Vec3>& vec3s, 
+	std::vector<Vec3>& buffer,
 	const HittableList& world,
 	const MaterialList& materials,
 	const ispc::Camera& camera, 
-	const int w, const int h, 
+	const int width, const int height, 
 	const int samples, 
 	const int bounces)
 {
-	ispc::Render(
-		reinterpret_cast<ispc::float3*>(vec3s.data()),
-		world.data(), static_cast<int>(world.size()),
-		materials.data(),
-		camera,
-		w, h,
-		samples, 
-		bounces);
+	const int numThreads = std::max(1, static_cast<int>(std::thread::hardware_concurrency()) - 2);
+	std::vector<std::thread> threads;
+
+	std::cerr << "Ray-tracing using " << numThreads << " threads" << std::endl;
+
+	const int tileSize = 16;
+	const int numTilesX = (width + tileSize - 1) / tileSize;
+	const int numTilesY = (height + tileSize - 1) / tileSize;
+	const int numTiles = numTilesX * numTilesY;
+
+	for (int threadIndex = 0; threadIndex != numThreads; ++threadIndex)
+	{
+		threads.emplace_back([=, &buffer, &camera, &world]()
+		{
+			for (int tile = threadIndex; tile < numTiles; tile += numThreads)
+			{
+				const int x0 = (tile % numTilesX) * tileSize;
+				const int y0 = (tile / numTilesX) * tileSize;
+
+				const int x1 = std::min(x0 + tileSize, width);
+				const int y1 = std::min(y0 + tileSize, height);
+				
+				ispc::RenderTile(
+					reinterpret_cast<ispc::float3*>(buffer.data()),
+					world.data(), static_cast<int>(world.size()),
+					materials.data(),
+					camera,
+					x0, x1,
+					y0, y1,
+					width, height,
+					samples,
+					bounces);
+			}
+		});
+	}
+
+	for (auto& thread : threads)
+	{
+		thread.join();
+	}
 }
 
 
-void OutputFramebuffer(const std::vector<Vec3>& buffer, const int w, const int h)
+void OutputFramebuffer(const std::vector<Vec3>& buffer, const int width, const int height)
 {
-	std::cout << "P3\n" << w << " " << h << "\n255\n";
+	std::cout << "P3\n" << width << " " << height << "\n255\n";
 
-	for (int j = h; j--;)
+	for (int j = height; j--;)
 	{
-		for (int i = 0; i < w; ++i)
+		for (int i = 0; i < width; ++i)
 		{
-			const Vec3& color = buffer[j * w + i];
+			const Vec3& color = buffer[j * width + i];
 			std::cout << static_cast<int>(color.x()) << " " << static_cast<int>(color.y()) << " " << static_cast<int>(color.z()) << "\n";
 		}
 	}
@@ -114,7 +147,7 @@ void Application()
 {
 	const int w = 3840/6;
 	const int h = 2160/6;
-	const int samples = 8;
+	const int samples = 64;
 	const int bounces = 16;
 
 	const Vec3 lookFrom(13, 2, 3);

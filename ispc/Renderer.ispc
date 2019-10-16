@@ -33,7 +33,7 @@ static Vec3 Color(
 	return (1 - t) * skyWhite + t * skyColor;
 }
 
-static void RenderTile(
+export static void RenderTile(
 	uniform Vec3 buffer[],
 	const uniform Hittable hittables[], const uniform int length,
 	const uniform Material materials[],
@@ -82,26 +82,4 @@ export uniform int GetTarget()
 export uniform int GetWidth()
 {
 	return programCount;
-}
-
-export void Render(
-	uniform Vec3 buffer[],
-	const uniform Hittable hittables[], const uniform int length,
-	const uniform Material materials[],
-	const uniform Camera& camera,
-	const uniform int width, const uniform int height,
-	const uniform int samples,
-	const uniform int bounces)
-{
-	RenderTile(
-		buffer,
-		hittables, length,
-		materials,
-		camera,
-		0, width,
-		0, height,
-		width, height,
-		samples,
-		bounces
-	);
 }
