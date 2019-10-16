@@ -27,7 +27,7 @@ use vec3::*;
 fn main() {
     const WIDTH: usize = 3840 / 6;
     const HEIGHT: usize = 2160 / 6;
-    const SAMPLES: usize = 8;
+    const SAMPLES: usize = 64;
     const BOUNCES: usize = 16;
 
     let look_from = Vec3::new(13.0, 2.0, 3.0);
