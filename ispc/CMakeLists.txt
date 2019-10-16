@@ -32,13 +32,12 @@ endif()
 # Executable definition
 set(EXE_NAME book1)
 set(ISPC_ARCH "x86-64")
-set(ISPC_FLAGS "")
+set(ISPC_FLAGS "--opt=disable-assertions" "-O2")
 set(ISPC_TARGETS "sse2-i32x4,sse4-i32x4,avx1-i32x8,avx2-i32x8,avx512skx-i32x16")
 
 if (UNIX)
 	list(APPEND ISPC_FLAGS --pic)
 endif()
-# TODO --opt=disable-assertions -O2
 
 set(ISPC_SRC_NAME Renderer)
 set(ISPC_HEADER_NAME "${ISPC_SRC_NAME}_ispc.h")

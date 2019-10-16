@@ -44,16 +44,16 @@ static void RenderTile(
 	const uniform int samples, 
 	const uniform int bounces)
 {
-	Random rng = NewRandom(1);// NewRandom(x0 + y0 * (programIndex << 15));
-
 	foreach_tiled(y = y0 ... y1, x = x0 ... x1) 
 	{
+		Random rng = NewRandom(InitRandomSeed(y, x));
+
 		Vec3 color = { 0, 0, 0 };
 
 		for (int s = 0; s < samples; ++s)
 		{
-			const float u = (float) (x/* + Uniform(rng)*/) / (float) (w);
-			const float v = (float) (y/* + Uniform(rng)*/) / (float) (h);
+			const float u = (float) (x + Uniform(rng)) / (float) (w);
+			const float v = (float) (y + Uniform(rng)) / (float) (h);
 
 			color += Color(rng, hittables, length, materials, GetRay(camera, rng, u, v), 0, bounces);
 		}

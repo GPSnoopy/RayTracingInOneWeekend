@@ -114,7 +114,7 @@ void Application()
 {
 	const int w = 3840/6;
 	const int h = 2160/6;
-	const int samples = 1;
+	const int samples = 8;
 	const int bounces = 16;
 
 	const Vec3 lookFrom(13, 2, 3);
@@ -122,7 +122,7 @@ void Application()
 	const Vec3 up(0, 1, 0);
 	const float fov = 20;
 	const float aspectRatio = float(w) / float(h);
-	const float aperture = 0.0;// 0.1;
+	const float aperture = 0.1;
 	const float focusDistance = 10.0f;
 
 	const auto camera = Camera::LookAt(lookFrom, lookAt, up, fov, aspectRatio, aperture, focusDistance);

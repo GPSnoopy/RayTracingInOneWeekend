@@ -6,12 +6,12 @@
 
 // Material Definitions
 
-typedef enum MaterialType_t
+enum MaterialType
 {
 	Lambertian = 0,
 	Metallic = 1,
 	Dielectric = 2
-} MaterialType;
+};
 
 struct Material
 {

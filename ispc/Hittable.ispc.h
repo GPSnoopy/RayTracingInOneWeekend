@@ -3,10 +3,10 @@
 #include "Material.ispc.h"
 #include "Ray.ispc.h"
 
-typedef enum HittableType_t
+enum HittableType
 {
 	Sphere = 0,
-} HittableType;
+};
 
 struct Hittable
 {
