@@ -17,6 +17,8 @@ static Vec3 Color(
 	if (hasHit)
 	{
 		MaterialRay materialRay;
+
+		#pragma ignore warning(perf)
 		const Material material = materials[hitRecord.MaterialIndex];
 		const int isScattered = Scatter(material, ray, hitRecord, rng, materialRay);
 		const Vec3 zero = { 0, 0, 0 };
@@ -58,6 +60,7 @@ export static void RenderTile(
 			color += Color(rng, hittables, length, materials, GetRay(camera, rng, u, v), 0, bounces);
 		}
 
+		#pragma ignore warning(perf)
 		buffer[y * w + x] = Sqrt(color / (float) samples) * 255.99f;
 	}
 }

@@ -1,6 +1,11 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.10)
 
 project(RayTracingInOneWeekend)
+
+# On Linux, default to Release if not specified.
+if (UNIX AND NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Specifies the build type on single-configuration generators" FORCE)
+endif ()
 
 set(CMAKE_DEBUG_POSTFIX d)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
@@ -21,12 +26,23 @@ if (WIN32)
 	add_compile_options("/fp:fast")
 endif()
 
+if (UNIX)
+	add_compile_options("-std=c++1z")
+	add_compile_options("-Wall")
+	add_compile_options("-fvisibility=hidden")
+	add_compile_options("-ffast-math")
+endif()
+
 find_program (ISPC_EXECUTABLE ispc)
 
 if (NOT ISPC_EXECUTABLE)
 	message(FATAL_ERROR "Could not find ISPC executable!" )
 else()
 	message(STATUS ${ISPC_EXECUTABLE})
+endif()
+
+if (UNIX)
+	find_package(Threads REQUIRED)
 endif()
 
 # Executable definition
@@ -103,16 +119,6 @@ add_executable(${EXE_NAME} ${HEADER_FILES} ${SRC_FILES} ${ISPC_HEADER_FILES} ${I
 set_target_properties(${EXE_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 target_include_directories(${EXE_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-
-
-# # Compile options
-# if (UNIX)
-# if (${ARCH_BIT} EQUAL 32)
-# target_compile_options(${example_NAME} PRIVATE -m32)
-# else()
-# target_compile_options(${example_NAME} PRIVATE -m64)
-# endif()
-# target_compile_options(${example_NAME} PRIVATE -fpie)
-# else()
-# target_compile_options(${example_NAME} PRIVATE /fp:fast /Oi)
-# endif()
+if (UNIX)
+	target_link_libraries(${EXE_NAME} Threads::Threads)
+endif()
