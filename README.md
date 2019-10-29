@@ -4,7 +4,7 @@
 
 ## Overview
 
-My take on [Peter Shirley's Ray Tracing in One Weekend](https://github.com/petershirley/raytracinginoneweekend) first book. The book is an excellent introduction to ray tracing; yet as the title implies, short enough you can write your own ray tracer in a weekend.
+My take on [Peter Shirley's Ray Tracing in One Weekend](https://github.com/RayTracing/raytracing.github.io) first book. The book is an excellent introduction to ray tracing; yet as the title implies, short enough you can write your own ray tracer in a weekend.
 
 On top of my own programming style, I have added multi-threading support (using a separate random number generator for each thread).
 
