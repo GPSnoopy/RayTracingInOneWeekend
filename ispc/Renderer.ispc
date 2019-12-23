@@ -75,10 +75,10 @@ export uniform int GetTarget()
 	return 2;
 #elif defined(ISPC_TARGET_AVX2)
 	return 3;
-#elif defined(ISPC_TARGET_AVX2SKX)
+#elif defined(ISPC_TARGET_AVX512SKX)
 	return 4;
 #else
-	return -1;
+#error Unknown ISPC target
 #endif
 }
 
