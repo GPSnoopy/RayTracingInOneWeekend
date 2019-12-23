@@ -145,9 +145,9 @@ void OutputFramebuffer(const std::vector<Vec3>& buffer, const int width, const i
 
 void Application()
 {
-	const int w = 3840/6;
-	const int h = 2160/6;
-	const int samples = 64;
+	const int w = 3840;
+	const int h = 2160;
+	const int samples = 1024;
 	const int bounces = 16;
 
 	const Vec3 lookFrom(13, 2, 3);

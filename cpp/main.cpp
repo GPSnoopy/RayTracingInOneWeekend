@@ -141,8 +141,8 @@ void OutputFramebuffer(const std::vector<Vec3>& buffer, const int w, const int h
 
 void Application()
 {
-	const int w = 3840;//640;
-	const int h = 2160;//360;
+	const int w = 3840;
+	const int h = 2160;
 	const int samples = 1024;
 	const int bounces = 16;
 

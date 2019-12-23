@@ -25,9 +25,9 @@ use vec3::*;
  use std::io::Write;
 
 fn main() {
-    const WIDTH: usize = 3840 / 6;
-    const HEIGHT: usize = 2160 / 6;
-    const SAMPLES: usize = 64;
+    const WIDTH: usize = 3840;
+    const HEIGHT: usize = 2160;
+    const SAMPLES: usize = 1024;
     const BOUNCES: usize = 16;
 
     let look_from = Vec3::new(13.0, 2.0, 3.0);
