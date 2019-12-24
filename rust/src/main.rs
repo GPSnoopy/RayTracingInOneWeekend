@@ -154,10 +154,7 @@ fn get_color(random: &mut Random, world: &HittableList, ray: &Ray, depth: usize,
     if let Some(hit) = world.hit(ray, 0.001, std::f32::MAX) {
         if depth < max_depth {
             let material_ray = hit.material.scatter(ray, &hit, random);
-            return match material_ray {
-                Some(scatter) => {scatter.attenuation * get_color(random, world, &scatter.scattered, depth + 1, max_depth)} 
-                None => { Vec3::zero() }
-            }
+            return material_ray.map_or(Vec3::zero(), |s| s.attenuation * get_color(random, world, &s.scattered, depth + 1, max_depth));
         }
     }
 
