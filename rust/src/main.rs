@@ -57,33 +57,33 @@ fn random_world() -> HittableList {
 
     for a in -11..11 {
         for b in -11..11 {
-			let choose_mat = uniform(random);
-			let center = Vec3::new(a as f32 + 0.9*uniform(random), 0.2, b as f32 + 0.9*uniform(random));
+            let choose_mat = uniform(random);
+            let center = Vec3::new(a as f32 + 0.9*uniform(random), 0.2, b as f32 + 0.9*uniform(random));
 
-			if length(center - Vec3::new(4.0, 0.2, 0.0)) > 0.9 {
-				if choose_mat < 0.8 { // Diffuse
-					world.add(Box::new(Sphere::new(center, 0.2, Box::new(Lambertian::new(Vec3::new(
-						uniform(random)*uniform(random), 
-						uniform(random)*uniform(random), 
-						uniform(random)*uniform(random)))))));
-				}
-				else if choose_mat < 0.95 { // Metal
-					world.add(Box::new(Sphere::new(center, 0.2, Box::new(Metal::new(
-						Vec3::new(0.5*(1.0 + uniform(random)), 0.5*(1.0 + uniform(random)), 0.5*(1.0 + uniform(random))),
-						0.5*uniform(random))))));
-				}
-				else { // Glass
-					world.add(Box::new(Sphere::new(center, 0.2, Box::new(Dielectric::new(1.5)))));
-				}
-			}
-		}
-	}
+            if length(center - Vec3::new(4.0, 0.2, 0.0)) > 0.9 {
+                if choose_mat < 0.8 { // Diffuse
+                    world.add(Box::new(Sphere::new(center, 0.2, Box::new(Lambertian::new(Vec3::new(
+                        uniform(random)*uniform(random), 
+                        uniform(random)*uniform(random), 
+                        uniform(random)*uniform(random)))))));
+                }
+                else if choose_mat < 0.95 { // Metal
+                    world.add(Box::new(Sphere::new(center, 0.2, Box::new(Metal::new(
+                        Vec3::new(0.5*(1.0 + uniform(random)), 0.5*(1.0 + uniform(random)), 0.5*(1.0 + uniform(random))),
+                        0.5*uniform(random))))));
+                }
+                else { // Glass
+                    world.add(Box::new(Sphere::new(center, 0.2, Box::new(Dielectric::new(1.5)))));
+                }
+            }
+        }
+    }
 
-	world.add(Box::new(Sphere::new(Vec3::new(0.0, 1.0, 0.0), 1.0, Box::new(Dielectric::new(1.5)))));
-	world.add(Box::new(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 1.0, Box::new(Lambertian::new(Vec3::new(0.4, 0.2, 0.1))))));
-	world.add(Box::new(Sphere::new(Vec3::new(4.0, 1.0, 0.0), 1.0, Box::new(Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.0)))));
+    world.add(Box::new(Sphere::new(Vec3::new(0.0, 1.0, 0.0), 1.0, Box::new(Dielectric::new(1.5)))));
+    world.add(Box::new(Sphere::new(Vec3::new(-4.0, 1.0, 0.0), 1.0, Box::new(Lambertian::new(Vec3::new(0.4, 0.2, 0.1))))));
+    world.add(Box::new(Sphere::new(Vec3::new(4.0, 1.0, 0.0), 1.0, Box::new(Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.0)))));
 
-	world
+    world
 }
 
 fn render_scene(
@@ -151,7 +151,7 @@ fn render_scene_per_thread(
 }
 
 fn get_color(random: &mut Random, world: &HittableList, ray: &Ray, depth: usize, max_depth: usize) -> Vec3 {
-	if let Some(hit) = world.hit(ray, 0.001, std::f32::MAX) {
+    if let Some(hit) = world.hit(ray, 0.001, std::f32::MAX) {
         if depth < max_depth {
             let material_ray = hit.material.scatter(ray, &hit, random);
             return match material_ray {
@@ -159,10 +159,10 @@ fn get_color(random: &mut Random, world: &HittableList, ray: &Ray, depth: usize,
                 None => { Vec3::zero() }
             }
         }
-	}
+    }
 
-	let direction = unit_vector(ray.direction);
-	let t = 0.5*(direction.y() + 1.0);
+    let direction = unit_vector(ray.direction);
+    let t = 0.5*(direction.y() + 1.0);
 
     (1.0 - t)*Vec3::one() + t * Vec3::new(0.5, 0.7, 1.0)
 }
