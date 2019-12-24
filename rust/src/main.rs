@@ -142,7 +142,7 @@ fn render_scene_per_thread(
             {
                 // https://internals.rust-lang.org/t/shouldnt-pointers-be-send-sync-or/8818
                 let color = sqrt(color / samples as f32) * 255.99;
-                let ptr = (buffer_ptr as *mut Vec3).offset((j*w + i) as isize);
+                let ptr = (buffer_ptr as *mut Vec3).add(j*w + i);
                 
                 *ptr = color;
             }
@@ -164,10 +164,10 @@ fn get_color(random: &mut Random, world: &HittableList, ray: &Ray, depth: usize,
 	let direction = unit_vector(ray.direction);
 	let t = 0.5*(direction.y() + 1.0);
 
-	return (1.0 - t)*Vec3::one() + t * Vec3::new(0.5, 0.7, 1.0);
+    (1.0 - t)*Vec3::one() + t * Vec3::new(0.5, 0.7, 1.0)
 }
 
-fn output_frame_buffer(buffer: &Vec<Vec3>, w: usize, h: usize) {
+fn output_frame_buffer(buffer: &[Vec3], w: usize, h: usize) {
     // println! is really slow, lock stdout and use it directly.
     let stdout = std::io::stdout();
     let lock = stdout.lock();
