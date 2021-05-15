@@ -73,6 +73,7 @@ const char* GetTargetString(int target)
 	case 2: return "AVX";
 	case 3: return "AVX2";
 	case 4: return "AVX512";
+	case 100: return "NEON";
 	default: return "Unknown";
 	}
 }
@@ -162,8 +163,11 @@ void Application()
 	const auto [hittables, materials] = RandomWorld();
 	std::vector<Vec3> buffer(w * h);
 
+	std::cerr << "ISPC Version: " << ispc::GetVersionMajor() << "." << ispc::GetVersionMinor() << std::endl;
 	std::cerr << "ISPC Target: " << GetTargetString(ispc::GetTarget()) << std::endl;
-	std::cerr << "ISPC Width: " << ispc::GetWidth() << std::endl;
+	std::cerr << "ISPC Width: " << 
+		ispc::GetTargetWidth() * ispc::GetTargetElementWidth() * 8 << " bits (" <<
+		ispc::GetTargetWidth() << " x " << ispc::GetTargetElementWidth() << " bytes)" << std::endl;
 
 	Render(buffer, hittables, materials, camera, w, h, samples, bounces);
 	OutputFramebuffer(buffer, w, h);

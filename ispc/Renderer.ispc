@@ -65,6 +65,16 @@ export static void RenderTile(
 	}
 }
 
+export uniform int GetVersionMajor()
+{
+	return ISPC_MAJOR_VERSION;
+}
+
+export uniform int GetVersionMinor()
+{
+	return ISPC_MINOR_VERSION;
+}
+
 export uniform int GetTarget()
 {
 #if defined(ISPC_TARGET_SSE2)
@@ -77,12 +87,19 @@ export uniform int GetTarget()
 	return 3;
 #elif defined(ISPC_TARGET_AVX512SKX)
 	return 4;
+#elif defined(ISPC_TARGET_NEON)
+	return 100;
 #else
 #error Unknown ISPC target
 #endif
 }
 
-export uniform int GetWidth()
+export uniform int GetTargetWidth()
 {
-	return programCount;
+	return TARGET_WIDTH;
+}
+
+export uniform int GetTargetElementWidth()
+{
+	return TARGET_ELEMENT_WIDTH;
 }
