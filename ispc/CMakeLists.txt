@@ -53,15 +53,15 @@ set(ISPC_FLAGS "--opt=disable-assertions" "-O2")
 # Intel x86-64 CPUs
 if (X86_64_CPU)
 	set(ISPC_ARCH "x86-64")
-	set(ISPC_KNOWN_TARGETS "sse2" "sse4" "avx1" "avx2" "avx512skx")
 	set(ISPC_TARGETS "sse2-i32x4,sse4-i32x4,avx1-i32x8,avx2-i32x8,avx512skx-i32x16")
+	set(ISPC_TARGETS_OBJS "sse2" "sse4" "avx1" "avx2" "avx512skx")
 endif()
 
 # ARM aarch64 CPUs
 if (ARM64_CPU)
 	set(ISPC_ARCH "aarch64")
-	set(ISPC_KNOWN_TARGETS "neon")
 	set(ISPC_TARGETS "neon-i32x4")
+	set(ISPC_TARGETS_OBJS "neon")
 endif()
 
 if (UNIX)
@@ -92,11 +92,11 @@ set(ISPC_HEADER_FILES
 	Ray.ispc.h
 	Vec3.ispc.h)
 
-# Collect list of expected ISPC outputs.
+# Collect list of expected ISPC outputs (obj file names unfortunately do not exactly match the list of targets, hence the extra ceremonial code).
 list(APPEND ISPC_BUILD_OUTPUT_HEADERS "${CMAKE_CURRENT_BINARY_DIR}/${ISPC_HEADER_NAME}")
 list(APPEND ISPC_BUILD_OUTPUT_OBJS "${CMAKE_CURRENT_BINARY_DIR}/${ISPC_OBJ_NAME}")
 
-foreach (ISPC_TARGET ${ISPC_KNOWN_TARGETS})
+foreach (ISPC_TARGET ${ISPC_TARGETS_OBJS})
 	string(FIND ${ISPC_TARGETS} ${ISPC_TARGET} FOUND_TARGET)
 	if (${FOUND_TARGET} GREATER -1)
 		set(OUTPUT_TARGET ${ISPC_TARGET})
