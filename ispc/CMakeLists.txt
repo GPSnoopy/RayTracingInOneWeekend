@@ -50,18 +50,31 @@ endif()
 set(EXE_NAME book1)
 set(ISPC_FLAGS "--opt=disable-assertions" "-O2")
 
-# Intel x86-64 CPUs
-if (X86_64_CPU)
-	set(ISPC_ARCH "x86-64")
-	set(ISPC_TARGETS "sse2-i32x4,sse4-i32x4,avx1-i32x8,avx2-i32x8,avx512skx-i32x16")
-	set(ISPC_TARGETS_OBJS "sse2" "sse4" "avx1" "avx2" "avx512skx")
+# Find out the CPU type.
+if (UNIX)
+    if (NOT ISPC_ARCH)
+        execute_process(COMMAND bash "-c" "uname -m | sed -e s/x86_64/x86-64/ -e s/amd64/x86-64/ -e s/arm64/aarch64/" OUTPUT_VARIABLE ispc_arch)
+        string(STRIP ${ispc_arch} ispc_arch)
+    endif()
+else()
+    if (NOT ISPC_ARCH)
+		set(ispc_arch "x86-64")
+	endif()	
 endif()
 
-# ARM aarch64 CPUs
-if (ARM64_CPU)
-	set(ISPC_ARCH "aarch64")
+set(ISPC_ARCH "${ispc_arch}" CACHE STRING "ISPC CPU ARCH")
+
+
+if ("${ISPC_ARCH}" STREQUAL "x86-64")
+	# Intel x86-64 CPUs
+	set(ISPC_TARGETS "sse2-i32x4,sse4-i32x4,avx1-i32x8,avx2-i32x8,avx512skx-i32x16")
+	set(ISPC_TARGETS_OBJS "sse2" "sse4" "avx1" "avx2" "avx512skx")
+elseif ("${ISPC_ARCH}" STREQUAL "aarch64")
+	# ARM aarch64 CPUs
 	set(ISPC_TARGETS "neon-i32x4")
 	set(ISPC_TARGETS_OBJS "neon")
+else ()
+	message(FATAL_ERROR "Unknown ISPC_ARCH '${ISPC_ARCH}'")
 endif()
 
 if (UNIX)
