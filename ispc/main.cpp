@@ -87,7 +87,7 @@ void Render(
 	const int samples, 
 	const int bounces)
 {
-	const int numThreads = std::max(1, static_cast<int>(std::thread::hardware_concurrency()) - 2);
+	const int numThreads = std::max(1, static_cast<int>(std::thread::hardware_concurrency()));
 	std::vector<std::thread> threads;
 
 	std::cerr << "Ray-tracing using " << numThreads << " threads" << std::endl;
@@ -146,9 +146,9 @@ void OutputFramebuffer(const std::vector<Vec3>& buffer, const int width, const i
 
 void Application()
 {
-	const int w = 3840/4;
-	const int h = 2160/4;
-	const int samples = 16;//1024;
+	const int w = 3840;
+	const int h = 2160;
+	const int samples = 1024;
 	const int bounces = 16;
 
 	const Vec3 lookFrom(13, 2, 3);
