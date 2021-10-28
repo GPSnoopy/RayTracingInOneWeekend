@@ -19,15 +19,16 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${PROJECT_BINARY_DIR}/lib)
 endforeach()
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if (WIN32)
 	add_definitions(-DUNICODE -D_UNICODE)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
-	add_compile_options("/std:c++17")
 	add_compile_options("/fp:fast")
 endif()
 
 if (UNIX)
-	add_compile_options("-std=c++1z")
 	add_compile_options("-Wall")
 	add_compile_options("-fvisibility=hidden")
 	add_compile_options("-ffast-math")
@@ -47,9 +48,21 @@ endif()
 
 # Executable definition
 set(EXE_NAME book1)
-set(ISPC_ARCH "x86-64")
 set(ISPC_FLAGS "--opt=disable-assertions" "-O2")
-set(ISPC_TARGETS "sse2-i32x4,sse4-i32x4,avx1-i32x8,avx2-i32x8,avx512skx-i32x16")
+
+# Intel x86-64 CPUs
+if (X86_64_CPU)
+	set(ISPC_ARCH "x86-64")
+	set(ISPC_KNOWN_TARGETS "sse2" "sse4" "avx1" "avx2" "avx512skx")
+	set(ISPC_TARGETS "sse2-i32x4,sse4-i32x4,avx1-i32x8,avx2-i32x8,avx512skx-i32x16")
+endif()
+
+# ARM aarch64 CPUs
+if (ARM64_CPU)
+	set(ISPC_ARCH "aarch64")
+	set(ISPC_KNOWN_TARGETS "neon")
+	set(ISPC_TARGETS "neon-i32x4")
+endif()
 
 if (UNIX)
 	list(APPEND ISPC_FLAGS --pic)
@@ -58,7 +71,6 @@ endif()
 set(ISPC_SRC_NAME Renderer)
 set(ISPC_HEADER_NAME "${ISPC_SRC_NAME}_ispc.h")
 set(ISPC_OBJ_NAME "${ISPC_SRC_NAME}_ispc${CMAKE_CXX_OUTPUT_EXTENSION}")
-set(ISPC_KNOWN_TARGETS "sse2" "sse4" "avx1-" "avx2" "avx512skx")
 
 set(HEADER_FILES 
 	Camera.h
@@ -88,7 +100,7 @@ foreach (ISPC_TARGET ${ISPC_KNOWN_TARGETS})
 	string(FIND ${ISPC_TARGETS} ${ISPC_TARGET} FOUND_TARGET)
 	if (${FOUND_TARGET} GREATER -1)
 		set(OUTPUT_TARGET ${ISPC_TARGET})
-		if (${ISPC_TARGET} STREQUAL "avx1-")
+		if (${ISPC_TARGET} STREQUAL "avx1")
 			set(OUTPUT_TARGET "avx")
 		endif()
 		list(APPEND ISPC_BUILD_OUTPUT_HEADERS "${CMAKE_CURRENT_BINARY_DIR}/${ISPC_SRC_NAME}_ispc_${OUTPUT_TARGET}.h")
@@ -98,7 +110,8 @@ endforeach()
 
 # ISPC command.
 add_custom_command(OUTPUT ${ISPC_BUILD_OUTPUT_HEADERS} ${ISPC_BUILD_OUTPUT_OBJS}
-	COMMAND ${ISPC_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${ISPC_SRC_NAME}.ispc ${ISPC_FLAGS} --target=${ISPC_TARGETS} --arch=${ISPC_ARCH} -h ${ISPC_HEADER_NAME} -o ${ISPC_OBJ_NAME}
+	COMMAND ${ISPC_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${ISPC_SRC_NAME}.ispc ${ISPC_FLAGS} --target=${ISPC_TARGETS} --arch=${ISPC_ARCH} -h ${ISPC_HEADER_NAME} -o 
+${ISPC_OBJ_NAME}
 	VERBATIM
 	DEPENDS ${ISPC_HEADER_FILES}
 	DEPENDS "${ISPC_SRC_NAME}.ispc")

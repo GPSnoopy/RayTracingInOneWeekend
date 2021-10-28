@@ -34,7 +34,7 @@ std::tuple<HittableList, MaterialList> RandomWorld()
 			const float chooseMat = Uniform(random);
 			const Vec3 center(a + 0.9f*Uniform(random), 0.2f, b + 0.9f*Uniform(random));
 
-			if (Length(center - Vec3(4, 0.2f, 0)) > 0.9)
+			if (Length(center - Vec3(4, 0.2f, 0)) > 0.9f)
 			{
 				if (chooseMat < 0.8f) // Diffuse
 				{
@@ -64,7 +64,7 @@ std::tuple<HittableList, MaterialList> RandomWorld()
 	return std::forward_as_tuple(hittables, materials);
 }
 
-const char* GetTargetString(int target)
+const char* GetTargetString(const int target)
 {
 	switch (target)
 	{
@@ -146,17 +146,17 @@ void OutputFramebuffer(const std::vector<Vec3>& buffer, const int width, const i
 
 void Application()
 {
-	const int w = 3840;
-	const int h = 2160;
-	const int samples = 1024;
+	const int w = 3840/4;
+	const int h = 2160/4;
+	const int samples = 16;//1024;
 	const int bounces = 16;
 
 	const Vec3 lookFrom(13, 2, 3);
 	const Vec3 lookAt(0, 0, 0);
 	const Vec3 up(0, 1, 0);
 	const float fov = 20;
-	const float aspectRatio = float(w) / float(h);
-	const float aperture = 0.1;
+	const float aspectRatio = static_cast<float>(w) / static_cast<float>(h);
+	const float aperture = 0.1f;
 	const float focusDistance = 10.0f;
 
 	const auto camera = Camera::LookAt(lookFrom, lookAt, up, fov, aspectRatio, aperture, focusDistance);
