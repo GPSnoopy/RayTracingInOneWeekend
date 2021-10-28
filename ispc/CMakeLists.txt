@@ -108,7 +108,7 @@ set(ISPC_HEADER_FILES
 # Collect list of expected ISPC outputs (obj file names unfortunately do not exactly match the list of targets, hence the extra ceremonial code).
 list(APPEND ISPC_BUILD_OUTPUT_HEADERS "${CMAKE_CURRENT_BINARY_DIR}/${ISPC_HEADER_NAME}")
 list(APPEND ISPC_BUILD_OUTPUT_OBJS "${CMAKE_CURRENT_BINARY_DIR}/${ISPC_OBJ_NAME}")
-list(LENGTH ISPC_TARGETS NUMBER_OF_TARGETS)
+list(LENGTH ISPC_TARGETS_OBJS NUMBER_OF_TARGETS)
 
 if (${NUMBER_OF_TARGETS} GREATER 1)
 	foreach (ISPC_TARGET ${ISPC_TARGETS_OBJS})
