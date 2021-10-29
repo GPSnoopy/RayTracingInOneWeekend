@@ -27,27 +27,33 @@ std::tuple<HittableList, MaterialList> RandomWorld()
 
 	AddSphere(hittables, materials, Vec3(0, -1000, 0), 1000, Material::Lambertian(Vec3(0.5f, 0.5f, 0.5f)));
 
-	for (int a = -11; a < 11; ++a)
+	for (int i = -11; i < 11; ++i)
 	{
-		for (int b = -11; b < 11; ++b)
+		for (int j = -11; j < 11; ++j)
 		{
 			const float chooseMat = Uniform(random);
-			const Vec3 center(a + 0.9f*Uniform(random), 0.2f, b + 0.9f*Uniform(random));
+			const float center_y = static_cast<float>(j) + 0.9f * Uniform(random);
+			const float center_x = static_cast<float>(i) + 0.9f * Uniform(random);
+			const Vec3 center(center_x, 0.2f, center_y);
 
-			if (Length(center - Vec3(4, 0.2f, 0)) > 0.9)
+			if (Length(center - Vec3(4, 0.2f, 0)) > 0.9f)
 			{
 				if (chooseMat < 0.8f) // Diffuse
 				{
-					AddSphere(hittables, materials, center, 0.2f, Material::Lambertian(Vec3(
-						Uniform(random)*Uniform(random), 
-						Uniform(random)*Uniform(random), 
-						Uniform(random)*Uniform(random))));
+					const float b = Uniform(random) * Uniform(random);
+					const float g = Uniform(random) * Uniform(random);
+					const float r = Uniform(random) * Uniform(random);
+
+					AddSphere(hittables, materials, center, 0.2f, Material::Lambertian(Vec3(r, g, b)));
 				}
 				else if (chooseMat < 0.95f) // Metal
 				{
-					AddSphere(hittables, materials, center, 0.2f, Material::Metallic(
-						Vec3(0.5f*(1 + Uniform(random)), 0.5f*(1 + Uniform(random)), 0.5f*(1 + Uniform(random))),
-						0.5f*Uniform(random)));
+					const float fuzziness = 0.5f * Uniform(random);
+					const float b = 0.5f * (1 + Uniform(random));
+					const float g = 0.5f * (1 + Uniform(random));
+					const float r = 0.5f * (1 + Uniform(random));
+
+					AddSphere(hittables, materials, center, 0.2f, Material::Metallic(Vec3(r, g, b), fuzziness));
 				}
 				else // Glass
 				{
@@ -64,7 +70,7 @@ std::tuple<HittableList, MaterialList> RandomWorld()
 	return std::forward_as_tuple(hittables, materials);
 }
 
-const char* GetTargetString(int target)
+const char* GetTargetString(const int target)
 {
 	switch (target)
 	{
@@ -87,12 +93,12 @@ void Render(
 	const int samples, 
 	const int bounces)
 {
-	const int numThreads = std::max(1, static_cast<int>(std::thread::hardware_concurrency()) - 2);
+	const int numThreads = std::max(1, static_cast<int>(std::thread::hardware_concurrency()));
 	std::vector<std::thread> threads;
 
 	std::cerr << "Ray-tracing using " << numThreads << " threads" << std::endl;
 
-	const int tileSize = 16;
+	constexpr int tileSize = 16;
 	const int numTilesX = (width + tileSize - 1) / tileSize;
 	const int numTilesY = (height + tileSize - 1) / tileSize;
 	const int numTiles = numTilesX * numTilesY;
@@ -146,18 +152,19 @@ void OutputFramebuffer(const std::vector<Vec3>& buffer, const int width, const i
 
 void Application()
 {
-	const int w = 3840;
-	const int h = 2160;
-	const int samples = 1024;
-	const int bounces = 16;
+	constexpr bool fast = false;
+	constexpr int w = 3840 / (fast ? 4 : 1);
+	constexpr int h = 2160 / (fast ? 4 : 1);
+	constexpr int samples = 1024 / (fast ? 64 : 1);
+	constexpr int bounces = 16;
 
 	const Vec3 lookFrom(13, 2, 3);
 	const Vec3 lookAt(0, 0, 0);
 	const Vec3 up(0, 1, 0);
-	const float fov = 20;
-	const float aspectRatio = float(w) / float(h);
-	const float aperture = 0.1;
-	const float focusDistance = 10.0f;
+	constexpr float fov = 20;
+	constexpr float aspectRatio = static_cast<float>(w) / static_cast<float>(h);
+	constexpr float aperture = 0.1f;
+	constexpr float focusDistance = 10.0f;
 
 	const auto camera = Camera::LookAt(lookFrom, lookAt, up, fov, aspectRatio, aperture, focusDistance);
 	const auto [hittables, materials] = RandomWorld();
