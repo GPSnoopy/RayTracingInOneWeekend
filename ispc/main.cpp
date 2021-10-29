@@ -152,7 +152,7 @@ void OutputFramebuffer(const std::vector<Vec3>& buffer, const int width, const i
 
 void Application()
 {
-	constexpr bool fast = true;
+	constexpr bool fast = false;
 	constexpr int w = 3840 / (fast ? 4 : 1);
 	constexpr int h = 2160 / (fast ? 4 : 1);
 	constexpr int samples = 1024 / (fast ? 64 : 1);
