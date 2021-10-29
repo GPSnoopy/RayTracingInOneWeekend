@@ -98,7 +98,7 @@ void Render(
 
 	std::cerr << "Ray-tracing using " << numThreads << " threads" << std::endl;
 
-	const int tileSize = 16;
+	constexpr int tileSize = 16;
 	const int numTilesX = (width + tileSize - 1) / tileSize;
 	const int numTilesY = (height + tileSize - 1) / tileSize;
 	const int numTiles = numTilesX * numTilesY;
