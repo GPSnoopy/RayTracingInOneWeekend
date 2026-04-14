@@ -9,5 +9,5 @@ description = "Ray Tracing In One Weekend"
 
 [dependencies]
 num_cpus = "1.11.1"
-rand = "0.7.2"
+rand = "0.9.3"
 rand_pcg = "0.2.1"
